@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:travel_planner/widgets/mapbox_home_map.dart';
+import 'package:travel_planner/widgets/search_text_filed.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,25 +10,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  MapboxMapController? mapController;
-
-  _onMapCreated(MapboxMapController controller) async {
-    mapController = controller;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: MapboxMap(
-        onMapCreated: _onMapCreated,
-        accessToken:
-            "pk.eyJ1Ijoia2Vya3dpdCIsImEiOiJjbG1sbDE0bjEwYjd4MnN0bnkzeWJuY2hyIn0.OEg3-6uzcjfF8r1MhKWIEw",
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(14.057977, 100.614802),
-          zoom: 9.0,
-        ),
-        myLocationEnabled: true,
-        trackCameraPosition: true,
+    return const Scaffold(
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          MapboxHomeMap(),
+          Positioned(
+            top: 55,
+            left: 20,
+            right: 20,
+            child: SearchTextField(),
+          )
+        ],
       ),
     );
   }
