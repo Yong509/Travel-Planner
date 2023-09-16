@@ -15,12 +15,11 @@ class LocationProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
       _currentPosition = position;
-      print("current position ${_currentPosition!.latitude}");
+
       notifyListeners();
       return position;
     } catch (e) {
-      print(e.toString());
+      rethrow;
     }
-    return null;
   }
 }
