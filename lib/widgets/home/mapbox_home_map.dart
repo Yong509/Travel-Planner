@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/location_provider.dart';
+import '../../providers/location_provider.dart';
 
 class MapboxHomeMap extends StatefulWidget {
   const MapboxHomeMap({super.key});

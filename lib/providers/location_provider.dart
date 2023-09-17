@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
+import 'package:travel_planner/services/mapbox_services.dart';
 
 class LocationProvider extends ChangeNotifier {
-  Position? _currentPosition;
-  Position? get currentPosition => _currentPosition;
-
-  LocationProvider() {
+  final MapboxServices services;
+  LocationProvider(this.services) {
     getCurrentLocation();
   }
+
+  Position? _currentPosition;
+  Position? get currentPosition => _currentPosition;
+  GeocodingPlaces? _searchPlaceResults;
+  GeocodingPlaces? get searchPlaceResults => _searchPlaceResults;
 
   Future<Position?> getCurrentLocation() async {
     try {
@@ -21,5 +26,11 @@ class LocationProvider extends ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> searchPlace({required String searchedPlace}) async {
+    _searchPlaceResults = await services.searchPlace(place: searchedPlace);
+
+    notifyListeners();
   }
 }
