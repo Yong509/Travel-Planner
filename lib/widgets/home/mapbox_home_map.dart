@@ -40,14 +40,14 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
                 "pk.eyJ1Ijoia2Vya3dpdCIsImEiOiJjbG1sbDE0bjEwYjd4MnN0bnkzeWJuY2hyIn0.OEg3-6uzcjfF8r1MhKWIEw",
             initialCameraPosition: CameraPosition(
               target: LatLng(snapshot.data!.latitude, snapshot.data!.longitude),
-              zoom: 9.0,
+              zoom: 10.0,
             ),
             onMapClick: (_, latlng) async {
               await mapController?.animateCamera(
                 CameraUpdate.newCameraPosition(
                   CameraPosition(
                     target: LatLng(latlng.latitude, latlng.longitude),
-                    zoom: 9.0,
+                    zoom: 10.0,
                   ),
                 ),
               );
