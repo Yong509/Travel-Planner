@@ -16,16 +16,21 @@ class LocationProvider extends ChangeNotifier {
 
   Future<Position?> getCurrentLocation() async {
     try {
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      _currentPosition = position;
+      final permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        _currentPosition = position;
 
-      notifyListeners();
-      return position;
+        notifyListeners();
+        return position;
+      }
     } catch (e) {
       rethrow;
     }
+    return null;
   }
 
   Future<void> searchPlace({required String searchedPlace}) async {
