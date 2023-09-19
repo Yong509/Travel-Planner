@@ -5,8 +5,7 @@ import 'package:flutter_sliding_box/flutter_sliding_box.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_sizes.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_ui_strings.dart';
-
-import '../../providers/location_provider.dart';
+import 'package:travel_planner/providers/mapbox_provider.dart';
 
 class SlideBottomSheet extends StatefulWidget {
   const SlideBottomSheet({super.key});
@@ -34,9 +33,8 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
   }
 
   _onSearchPlace({required String searched}) async {
-    final locationProvider =
-        Provider.of<LocationProvider>(context, listen: false);
-    await locationProvider.searchPlace(searchedPlace: searched);
+    final mapboxProvider = Provider.of<MapboxProvider>(context, listen: false);
+    await mapboxProvider.searchPlace(searchedPlace: searched);
   }
 
   @override
@@ -50,8 +48,8 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
       draggableIconBackColor: Colors.white,
       body: Padding(
         padding: SlideBottomSheetSlideSizes.bottomSheetBodyPadding,
-        child: Consumer<LocationProvider>(
-          builder: (context, locationProvider, child) {
+        child: Consumer<MapboxProvider>(
+          builder: (context, mapboxProvider, child) {
             return Column(
               children: [
                 SizedBox(
@@ -81,22 +79,22 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
                     ),
                   ),
                 ),
-                if (locationProvider.searchPlaceResults != null) ...[
+                if (mapboxProvider.searchPlaceResults != null) ...[
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.zero,
                     itemCount:
-                        locationProvider.searchPlaceResults!.features!.length,
+                        mapboxProvider.searchPlaceResults!.features!.length,
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(
-                          locationProvider
+                          mapboxProvider
                               .searchPlaceResults!.features![index].text!,
                         ),
-                        subtitle: Text(locationProvider
+                        subtitle: Text(mapboxProvider
                             .searchPlaceResults!.features![index].placeName!
-                            .substring(locationProvider.searchPlaceResults!
+                            .substring(mapboxProvider.searchPlaceResults!
                                     .features![index].placeName!
                                     .indexOf(",") +
                                 2)),

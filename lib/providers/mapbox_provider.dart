@@ -3,9 +3,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 import 'package:travel_planner/services/mapbox_services.dart';
 
-class LocationProvider extends ChangeNotifier {
+class MapboxProvider extends ChangeNotifier {
   final MapboxServices services;
-  LocationProvider(this.services) {
+  MapboxProvider(this.services) {
     getCurrentLocation();
   }
 

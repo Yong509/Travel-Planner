@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
-
-import '../../providers/location_provider.dart';
+import 'package:travel_planner/providers/mapbox_provider.dart';
 
 class MapboxHomeMap extends StatefulWidget {
   const MapboxHomeMap({super.key});
@@ -19,9 +18,8 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
   @override
   void initState() {
     super.initState();
-    futureCurrentPosition =
-        Provider.of<LocationProvider>(context, listen: false)
-            .getCurrentLocation();
+    futureCurrentPosition = Provider.of<MapboxProvider>(context, listen: false)
+        .getCurrentLocation();
   }
 
   _onMapCreated(MapboxMapController controller) async {

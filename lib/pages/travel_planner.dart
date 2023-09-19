@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:travel_planner/pages/home/home_page.dart';
-import 'package:travel_planner/providers/location_provider.dart';
+import 'package:travel_planner/providers/mapbox_provider.dart';
 import 'package:travel_planner/services/mapbox_services.dart';
 
 import '../services/http_clinent_service.dart';
@@ -22,7 +22,7 @@ class _TravelPlannerState extends State<TravelPlanner> {
       Provider<HttpClientService>.value(value: httpClientService),
       Provider(create: (context) => MapboxServices(httpClientService)),
       ChangeNotifierProvider(
-        create: (context) => LocationProvider(
+        create: (context) => MapboxProvider(
           Provider.of<MapboxServices>(context, listen: false),
         ),
       ),
