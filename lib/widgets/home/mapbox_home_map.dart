@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_planner/constants/widget/home/mapbox_home_map_sizes.dart';
+
 import 'package:travel_planner/providers/mapbox_provider.dart';
 
 class MapboxHomeMap extends StatefulWidget {
@@ -12,7 +14,6 @@ class MapboxHomeMap extends StatefulWidget {
 }
 
 class _MapboxHomeMapState extends State<MapboxHomeMap> {
-  MapboxMapController? mapController;
   Future<Position?>? futureCurrentPosition;
 
   @override
@@ -23,7 +24,11 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
   }
 
   _onMapCreated(MapboxMapController controller) async {
-    mapController = controller;
+    final mapboxProvider = context.read<MapboxProvider>();
+    final marker = await mapboxProvider.loadMarkerImage();
+
+    mapboxProvider.mapController = controller;
+    await mapboxProvider.mapController!.addImage("marker", marker);
   }
 
   @override
@@ -34,21 +39,23 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
         if (snapshot.hasData) {
           return MapboxMap(
             onMapCreated: _onMapCreated,
-            accessToken:
-                "pk.eyJ1Ijoia2Vya3dpdCIsImEiOiJjbG1sbDE0bjEwYjd4MnN0bnkzeWJuY2hyIn0.OEg3-6uzcjfF8r1MhKWIEw",
+            accessToken: const String.fromEnvironment("PUBLIC_ACCESS_TOKEN"),
             initialCameraPosition: CameraPosition(
               target: LatLng(snapshot.data!.latitude, snapshot.data!.longitude),
-              zoom: 10.0,
+              zoom: MapboxHomeMapSizes.initCameraZoomSizes,
             ),
             onMapClick: (_, latlng) async {
-              await mapController?.animateCamera(
-                CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: LatLng(latlng.latitude, latlng.longitude),
-                    zoom: 10.0,
-                  ),
-                ),
-              );
+              await context
+                  .watch<MapboxProvider>()
+                  .mapController!
+                  .animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(latlng.latitude, latlng.longitude),
+                        zoom: MapboxHomeMapSizes.initCameraZoomSizes,
+                      ),
+                    ),
+                  );
             },
             myLocationEnabled: true,
             trackCameraPosition: true,

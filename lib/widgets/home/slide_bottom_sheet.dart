@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_sizes.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_ui_strings.dart';
 import 'package:travel_planner/providers/mapbox_provider.dart';
+import 'package:travel_planner/widgets/home/search_result_list.dart';
 
 class SlideBottomSheet extends StatefulWidget {
   const SlideBottomSheet({super.key});
@@ -17,8 +18,26 @@ class SlideBottomSheet extends StatefulWidget {
 class _SlideBottomSheetState extends State<SlideBottomSheet> {
   final BoxController boxController = BoxController();
   final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNode = FocusNode();
+  bool onFocus = false;
   Timer? isStopTyping;
   bool? isLoading;
+
+  @override
+  void initState() {
+    super.initState();
+    searchFocusNode.addListener(() {
+      if (searchFocusNode.hasFocus) {
+        setState(() {
+          onFocus = true;
+        });
+      } else {
+        setState(() {
+          onFocus = false;
+        });
+      }
+    });
+  }
 
   _onChange(String value) {
     if (isStopTyping != null) {
@@ -41,83 +60,45 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
   Widget build(BuildContext context) {
     return SlidingBox(
       controller: boxController,
-      minHeight: SlideBottomSheetSlideSizes().bottomSheetMinHeight(context),
+      minHeight:
+          SlideBottomSheetSlideSizes().bottomSheetMinHeight(context, onFocus),
       maxHeight: SlideBottomSheetSlideSizes().bottomSheetMaxHeight(context),
       color: Colors.white,
       collapsed: true,
       draggableIconBackColor: Colors.white,
       body: Padding(
         padding: SlideBottomSheetSlideSizes.bottomSheetBodyPadding,
-        child: Consumer<MapboxProvider>(
-          builder: (context, mapboxProvider, child) {
-            return Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width,
-                  child: TextField(
-                    controller: searchController,
-                    textAlignVertical: TextAlignVertical.center,
-                    onChanged: (value) => _onChange(value),
-                    decoration: InputDecoration(
-                      contentPadding: SlideBottomSheetSlideSizes
-                          .bottomSheetSearchDestContentPadding,
-                      hintText:
-                          SlideBottomSheetUiStrings.bottomSheetSearchPlaceHint,
-                      fillColor: Colors.grey[100],
-                      filled: true,
-                      suffixIcon: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.search),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          SlideBottomSheetSlideSizes
-                              .bottomSheetSearchDestPlaceBorderRadius,
-                        ),
-                        borderSide: BorderSide.none,
-                      ),
+        child: Column(
+          children: [
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              child: TextField(
+                focusNode: searchFocusNode,
+                controller: searchController,
+                textAlignVertical: TextAlignVertical.center,
+                onChanged: (value) => _onChange(value),
+                decoration: InputDecoration(
+                  contentPadding: SlideBottomSheetSlideSizes
+                      .bottomSheetSearchDestContentPadding,
+                  hintText:
+                      SlideBottomSheetUiStrings.bottomSheetSearchPlaceHint,
+                  fillColor: Colors.grey[100],
+                  filled: true,
+                  suffixIcon: const Icon(
+                    Icons.search,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      SlideBottomSheetSlideSizes
+                          .bottomSheetSearchDestPlaceBorderRadius,
                     ),
+                    borderSide: BorderSide.none,
                   ),
                 ),
-                if (mapboxProvider.searchPlaceResults != null) ...[
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    itemCount:
-                        mapboxProvider.searchPlaceResults!.features!.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          mapboxProvider
-                              .searchPlaceResults!.features![index].text!,
-                        ),
-                        subtitle: Text(mapboxProvider
-                            .searchPlaceResults!.features![index].placeName!
-                            .substring(mapboxProvider.searchPlaceResults!
-                                    .features![index].placeName!
-                                    .indexOf(",") +
-                                2)),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: SlideBottomSheetSlideSizes
-                            .resultSearchPlacePaddingDivider,
-                        child: Divider(
-                          color: Colors.black.withAlpha(20),
-                          thickness: SlideBottomSheetSlideSizes
-                              .resultSearchPlacePaddingDividerThickness,
-                          height: SlideBottomSheetSlideSizes
-                              .resultSearchPlacePaddingDividerHigh,
-                        ),
-                      );
-                    },
-                  ),
-                ]
-              ],
-            );
-          },
+              ),
+            ),
+            const SearchResultList(),
+          ],
         ),
       ),
     );
