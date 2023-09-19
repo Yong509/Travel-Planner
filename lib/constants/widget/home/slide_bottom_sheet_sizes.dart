@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:travel_planner/utils/build_context_extension.dart';
 
 class SlideBottomSheetSlideSizes {
   double bottomSheetMinHeight(BuildContext context) {
-    return MediaQuery.of(context).size.height * 0.15;
+    return context.mediaQuery.size.height * 0.15;
   }
 
   double bottomSheetMaxHeight(BuildContext context) {
-    return MediaQuery.of(context).size.height * 0.5;
+    return context.mediaQuery.size.height * 0.5;
   }
 
   static EdgeInsets bottomSheetBodyPadding =
