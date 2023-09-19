@@ -10,9 +10,8 @@ import 'package:travel_planner/services/mapbox_services.dart';
 
 class MapboxProvider extends ChangeNotifier {
   final MapboxServices services;
-  MapboxProvider(this.services) {
-    getCurrentLocation();
-  }
+  MapboxProvider(this.services);
+
   MapboxMapController? _mapController;
   MapboxMapController? get mapController => _mapController;
   set mapController(MapboxMapController? controller) {
@@ -22,8 +21,10 @@ class MapboxProvider extends ChangeNotifier {
 
   Position? _currentPosition;
   Position? get currentPosition => _currentPosition;
+
   GeocodingPlaces? _searchPlaceResults;
   GeocodingPlaces? get searchPlaceResults => _searchPlaceResults;
+
   Feature? _selectedPlace;
   Feature? get selectedPlace => _selectedPlace;
 
