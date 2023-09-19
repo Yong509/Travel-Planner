@@ -1,0 +1,30 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Travel_planner (debug)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define",
+        "PUBLIC_ACCESS_TOKEN=pk.eyJ1Ijoia2Vya3dpdCIsImEiOiJjbG1sbDE0bjEwYjd4MnN0bnkzeWJuY2hyIn0.OEg3-6uzcjfF8r1MhKWIEw"
+      ]
+    },
+    {
+      "name": "Travel_planner (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "Travel_planner (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+}

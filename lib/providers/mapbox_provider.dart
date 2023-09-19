@@ -32,7 +32,6 @@ class MapboxProvider extends ChangeNotifier {
 
   Future<void> searchPlace({required String searchedPlace}) async {
     _searchPlaceResults = await services.searchPlace(place: searchedPlace);
-    print("search ${_searchPlaceResults}");
     notifyListeners();
   }
 }
