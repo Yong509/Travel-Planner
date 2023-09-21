@@ -7,7 +7,7 @@ class SlideBottomSheetSlideSizes {
   }
 
   static double bottomSheetMaxHeight(BuildContext context) {
-    return context.mediaQuery.size.height * 0.7;
+    return context.mediaQuery.size.height * 0.65;
   }
 
   static BorderRadiusGeometry radius = const BorderRadius.only(
@@ -17,9 +17,9 @@ class SlideBottomSheetSlideSizes {
 
   static BorderRadiusGeometry pullUpButtonRadius = BorderRadius.circular(20);
   static const EdgeInsets panelBodyPadding =
-      EdgeInsets.symmetric(vertical: 8.0, horizontal: 15);
-  static double panelPullUpButtonHeight = 20.0;
-  static double panelPullUpButtonWidth = 80.0;
+      EdgeInsets.symmetric(vertical: 20.0, horizontal: 15);
+  static double panelPullUpButtonHeight = 10.0;
+  static double panelPullUpButtonWidth = 50.0;
 
   static double panelPullUpButtonListResultDivider = 20.0;
 

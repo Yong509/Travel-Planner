@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:travel_planner/constants/widget/home/mapbox_home_map_sizes.dart';
+import 'package:travel_planner/models/mapbox/category/category_enum.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 import 'package:travel_planner/services/mapbox_services.dart';
 
@@ -74,7 +75,23 @@ class MapboxProvider extends ChangeNotifier {
   }
 
   Future<Uint8List> loadMarkerImage() async {
-    var byteData = await rootBundle.load("assets/icons/marker.png");
+    final byteData = await rootBundle.load("assets/icons/marker.png");
     return byteData.buffer.asUint8List();
+  }
+
+  Future<void> searchCategory({required CategoryEnum category}) async {
+    final result = await services.searchCategory(category: category.name);
+    mapController!.clearSymbols();
+    if (result != null) {
+      result.features!.map((poi) {
+        mapController!.addSymbol(
+          SymbolOptions(
+            iconSize: MapboxHomeMapSizes.iconSize,
+            iconImage: "marker",
+            geometry: LatLng(poi.center![1], poi.center![0]),
+          ),
+        );
+      });
+    }
   }
 }

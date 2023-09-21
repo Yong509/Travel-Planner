@@ -6,6 +6,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_sizes.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_ui_strings.dart';
 import 'package:travel_planner/providers/mapbox_provider.dart';
+import 'package:travel_planner/widgets/home/category_list.dart';
 import 'package:travel_planner/widgets/home/search_result_list.dart';
 
 class SlideBottomSheet extends StatefulWidget {
@@ -101,6 +102,7 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
                 ),
               ),
             ),
+            CategoryList(),
             SearchResultList(
               onSelected: (place) {
                 panelController.close();

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:travel_planner/constants/mapboxConstants.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 
 import '../constants/http_constant.dart';
@@ -15,6 +16,17 @@ class MapboxServices {
         '${HttpConstants.api_base_url}geocoding/v5/mapbox.places/$place.json?access_token=$accessKey&limit=6');
     final response = await httpClientService.get(url);
 
+    return response.statusCode == HttpConstants.statusOk
+        ? GeocodingPlaces.fromJson(jsonDecode(response.body))
+        : null;
+  }
+
+  Future<GeocodingPlaces?> searchCategory({required String category}) async {
+    final url = Uri.parse(
+      '${HttpConstants.api_base_url}geocoding/v5/mapbox.places/$category.json?type=poi&proximity=${MapboxConstants.proximity}&access_token=$accessKey&limit=25',
+    );
+
+    final response = await httpClientService.get(url);
     return response.statusCode == HttpConstants.statusOk
         ? GeocodingPlaces.fromJson(jsonDecode(response.body))
         : null;
