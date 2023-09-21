@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_sliding_box/flutter_sliding_box.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_sizes.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_ui_strings.dart';
 import 'package:travel_planner/providers/mapbox_provider.dart';
@@ -16,7 +16,7 @@ class SlideBottomSheet extends StatefulWidget {
 }
 
 class _SlideBottomSheetState extends State<SlideBottomSheet> {
-  final BoxController boxController = BoxController();
+  final panelController = PanelController();
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
   bool onFocus = false;
@@ -26,15 +26,10 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
   @override
   void initState() {
     super.initState();
+
     searchFocusNode.addListener(() {
       if (searchFocusNode.hasFocus) {
-        setState(() {
-          onFocus = true;
-        });
-      } else {
-        setState(() {
-          onFocus = false;
-        });
+        panelController.open();
       }
     });
   }
@@ -58,46 +53,59 @@ class _SlideBottomSheetState extends State<SlideBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SlidingBox(
-      controller: boxController,
-      minHeight:
-          SlideBottomSheetSlideSizes().bottomSheetMinHeight(context, onFocus),
-      maxHeight: SlideBottomSheetSlideSizes().bottomSheetMaxHeight(context),
+    return SlidingUpPanel(
+      controller: panelController,
+      minHeight: SlideBottomSheetSlideSizes.bottomSheetMinHeight(context),
+      maxHeight: SlideBottomSheetSlideSizes.bottomSheetMaxHeight(context),
       color: Colors.white,
-      collapsed: true,
-      draggableIconBackColor: Colors.white,
-      body: Padding(
-        padding: SlideBottomSheetSlideSizes.bottomSheetBodyPadding,
+      borderRadius: SlideBottomSheetSlideSizes.radius,
+      defaultPanelState: onFocus ? PanelState.OPEN : PanelState.CLOSED,
+      panel: Padding(
+        padding: SlideBottomSheetSlideSizes.panelBodyPadding,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Container(
+              alignment: Alignment.center,
+              width: SlideBottomSheetSlideSizes.panelPullUpButtonWidth,
+              height: SlideBottomSheetSlideSizes.panelPullUpButtonHeight,
+              decoration: BoxDecoration(
+                color: Colors.grey[700],
+                borderRadius: SlideBottomSheetSlideSizes.pullUpButtonRadius,
+              ),
+            ),
             SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              child: TextField(
-                focusNode: searchFocusNode,
-                controller: searchController,
-                textAlignVertical: TextAlignVertical.center,
-                onChanged: (value) => _onChange(value),
-                decoration: InputDecoration(
-                  contentPadding: SlideBottomSheetSlideSizes
-                      .bottomSheetSearchDestContentPadding,
-                  hintText:
-                      SlideBottomSheetUiStrings.bottomSheetSearchPlaceHint,
-                  fillColor: Colors.grey[100],
-                  filled: true,
-                  suffixIcon: const Icon(
-                    Icons.search,
+              height:
+                  SlideBottomSheetSlideSizes.panelPullUpButtonListResultDivider,
+            ),
+            TextField(
+              focusNode: searchFocusNode,
+              controller: searchController,
+              textAlignVertical: TextAlignVertical.center,
+              onChanged: (value) => _onChange(value),
+              decoration: InputDecoration(
+                contentPadding: SlideBottomSheetSlideSizes
+                    .bottomSheetSearchDestContentPadding,
+                hintText: SlideBottomSheetUiStrings.bottomSheetSearchPlaceHint,
+                fillColor: Colors.grey[100],
+                filled: true,
+                suffixIcon: const Icon(
+                  Icons.search,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                    SlideBottomSheetSlideSizes
+                        .bottomSheetSearchDestPlaceBorderRadius,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      SlideBottomSheetSlideSizes
-                          .bottomSheetSearchDestPlaceBorderRadius,
-                    ),
-                    borderSide: BorderSide.none,
-                  ),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
-            const SearchResultList(),
+            SearchResultList(
+              onSelected: (place) {
+                panelController.close();
+              },
+            ),
           ],
         ),
       ),

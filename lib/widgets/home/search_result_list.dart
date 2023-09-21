@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 import '../../constants/widget/home/slide_bottom_sheet_sizes.dart';
 import '../../providers/mapbox_provider.dart';
 
 class SearchResultList extends StatefulWidget {
-  const SearchResultList({super.key});
+  final Function(Feature selectedPlace) onSelected;
+  const SearchResultList({super.key, required this.onSelected});
 
   @override
   State<SearchResultList> createState() => _SearchResultListState();
@@ -25,6 +27,7 @@ class _SearchResultListState extends State<SearchResultList> {
             itemBuilder: (context, index) {
               return ListTile(
                 onTap: () {
+                  widget.onSelected(places.features![index]);
                   mapboxProvider.setSelectedPlace(
                       selected: places.features![index]);
                 },

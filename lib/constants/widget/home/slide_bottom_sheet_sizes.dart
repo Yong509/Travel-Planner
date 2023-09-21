@@ -2,13 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:travel_planner/utils/build_context_extension.dart';
 
 class SlideBottomSheetSlideSizes {
-  double bottomSheetMinHeight(BuildContext context, bool onFocus) {
-    return context.mediaQuery.size.height * (onFocus ? 0.7 : 0.15);
+  static double bottomSheetMinHeight(BuildContext context) {
+    return context.mediaQuery.size.height * 0.15;
   }
 
-  double bottomSheetMaxHeight(BuildContext context) {
+  static double bottomSheetMaxHeight(BuildContext context) {
     return context.mediaQuery.size.height * 0.7;
   }
+
+  static BorderRadiusGeometry radius = const BorderRadius.only(
+    topLeft: Radius.circular(24.0),
+    topRight: Radius.circular(24.0),
+  );
+
+  static BorderRadiusGeometry pullUpButtonRadius = BorderRadius.circular(20);
+  static const EdgeInsets panelBodyPadding =
+      EdgeInsets.symmetric(vertical: 8.0, horizontal: 15);
+  static double panelPullUpButtonHeight = 20.0;
+  static double panelPullUpButtonWidth = 80.0;
+
+  static double panelPullUpButtonListResultDivider = 20.0;
 
   static EdgeInsets bottomSheetBodyPadding =
       const EdgeInsets.symmetric(vertical: 20, horizontal: 15);

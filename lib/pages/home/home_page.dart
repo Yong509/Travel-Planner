@@ -15,16 +15,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        bottom: true,
-        top: false,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            MapboxHomeMap(),
-            Positioned(bottom: 0, child: SlideBottomSheet()),
-          ],
-        ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [MapboxHomeMap(), SlideBottomSheet()],
       ),
     );
   }

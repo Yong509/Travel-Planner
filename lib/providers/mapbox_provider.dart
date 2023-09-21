@@ -51,6 +51,7 @@ class MapboxProvider extends ChangeNotifier {
 
   Future<void> setSelectedPlace({required Feature selected}) async {
     _selectedPlace = selected;
+    await mapController!.clearSymbols();
     final lat = selected.center![1];
     final lng = selected.center![0];
     await mapController!.addSymbol(

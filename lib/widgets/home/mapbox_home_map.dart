@@ -45,8 +45,7 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
               zoom: MapboxHomeMapSizes.initCameraZoomSizes,
             ),
             onMapClick: (_, latlng) async {
-              await context
-                  .watch<MapboxProvider>()
+              await Provider.of<MapboxProvider>(context, listen: false)
                   .mapController!
                   .animateCamera(
                     CameraUpdate.newCameraPosition(
