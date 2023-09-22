@@ -80,18 +80,22 @@ class MapboxProvider extends ChangeNotifier {
   }
 
   Future<void> searchCategory({required CategoryEnum category}) async {
-    final result = await services.searchCategory(category: category.name);
+    final result = await services.searchCategory(
+        category: category.name,
+        proximity:
+            "${_currentPosition!.longitude},${_currentPosition!.latitude}");
     mapController!.clearSymbols();
     if (result != null) {
-      result.features!.map((poi) {
-        mapController!.addSymbol(
-          SymbolOptions(
-            iconSize: MapboxHomeMapSizes.iconSize,
-            iconImage: "marker",
-            geometry: LatLng(poi.center![1], poi.center![0]),
-          ),
-        );
-      });
+      await mapController!.addSymbols(result.features!
+          .map(
+            (poi) => SymbolOptions(
+              iconSize: MapboxHomeMapSizes.iconSize,
+              iconImage: "marker",
+              geometry: LatLng(poi.center![1], poi.center![0]),
+              zIndex: 2,
+            ),
+          )
+          .toList());
     }
   }
 }

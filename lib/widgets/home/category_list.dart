@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_planner/models/mapbox/category/category.dart';
+import 'package:travel_planner/providers/mapbox_provider.dart';
 
 class CategoryList extends StatefulWidget {
   const CategoryList({super.key});
@@ -26,15 +28,22 @@ class _CategoryListState extends State<CategoryList> {
             mainAxisSpacing: 20),
         itemCount: listCategory.length,
         itemBuilder: (context, index) {
-          return Container(
-            key: Key(listCategory[index].category.name),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.orange,
-            ),
-            child: Image.asset(
-              "assets/icons/restaurant_icon.png",
-              color: Colors.white,
+          return GestureDetector(
+            onTap: () async {
+              final mapController = context.read<MapboxProvider>();
+              await mapController.searchCategory(
+                  category: listCategory[index].category);
+            },
+            child: Container(
+              key: Key(listCategory[index].category.name),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.orange,
+              ),
+              child: Image.asset(
+                "assets/icons/restaurant_icon.png",
+                color: Colors.white,
+              ),
             ),
           );
         },
