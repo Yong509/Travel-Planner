@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_planner/constants/widget/home/category_list_sizes.dart';
 import 'package:travel_planner/models/mapbox/category/category.dart';
 import 'package:travel_planner/providers/mapbox_provider.dart';
 
@@ -14,18 +15,20 @@ class _CategoryListState extends State<CategoryList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 600,
-      height: 300,
+      height: CategoryListSizes.categoryHeight,
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: CategoryListSizes.categoryBorderRadius,
       ),
       child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 3 / 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20),
+        physics: const NeverScrollableScrollPhysics(),
+        padding: CategoryListSizes.gridViewPadding,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: CategoryListSizes.gridViewMaxCrossExistExtent,
+          crossAxisSpacing: CategoryListSizes.gridViewCrossAxisSpacing,
+          mainAxisSpacing: CategoryListSizes.gridViewMainAxisSpacing,
+          mainAxisExtent: CategoryListSizes.gridViewMainAxisExtent,
+        ),
         itemCount: listCategory.length,
         itemBuilder: (context, index) {
           return GestureDetector(
@@ -36,13 +39,14 @@ class _CategoryListState extends State<CategoryList> {
             },
             child: Container(
               key: Key(listCategory[index].category.name),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.orange,
               ),
               child: Image.asset(
-                "assets/icons/restaurant_icon.png",
+                listCategory[index].iconPath,
                 color: Colors.white,
+                scale: 8,
               ),
             ),
           );

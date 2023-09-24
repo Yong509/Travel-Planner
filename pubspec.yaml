@@ -40,6 +40,8 @@ dependencies:
   json_serializable: ^6.7.1
   build_runner: ^2.4.6
   sliding_up_panel: ^2.0.0+1
+  http: ^1.1.0
+  flutter_polyline_points: ^2.0.0
 
 dev_dependencies:
   flutter_test:

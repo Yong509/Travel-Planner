@@ -33,4 +33,7 @@ class SlideBottomSheetSlideSizes {
       const EdgeInsets.symmetric(horizontal: 20);
   static double resultSearchPlacePaddingDividerThickness = 1;
   static double resultSearchPlacePaddingDividerHigh = 1;
+
+  static const EdgeInsets searchTextCateoriesDivider =
+      EdgeInsets.symmetric(vertical: 30.0);
 }

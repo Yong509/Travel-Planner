@@ -21,7 +21,6 @@ class _SearchResultListState extends State<SearchResultList> {
           final places = mapboxProvider.searchPlaceResults!;
           return ListView.separated(
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             itemCount: places.features!.length,
             itemBuilder: (context, index) {

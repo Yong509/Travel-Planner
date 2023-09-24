@@ -2,10 +2,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:travel_planner/constants/widget/home/mapbox_home_map_sizes.dart';
 import 'package:travel_planner/models/mapbox/category/category_enum.dart';
+import 'package:travel_planner/models/mapbox/direction/direction.dart';
+import 'package:travel_planner/models/mapbox/direction/routing_profile_enum.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 import 'package:travel_planner/services/mapbox_services.dart';
 
@@ -28,6 +31,9 @@ class MapboxProvider extends ChangeNotifier {
 
   Feature? _selectedPlace;
   Feature? get selectedPlace => _selectedPlace;
+
+  Direction? _directions;
+  Direction? get direction => _directions;
 
   Future<Position?> getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
@@ -53,8 +59,10 @@ class MapboxProvider extends ChangeNotifier {
   Future<void> setSelectedPlace({required Feature selected}) async {
     _selectedPlace = selected;
     await mapController!.clearSymbols();
+    await mapController!.clearLines();
     final lat = selected.center![1];
     final lng = selected.center![0];
+    await drawLine(destinations: [LatLng(lat, lng)]);
     await mapController!.addSymbol(
       SymbolOptions(
         iconSize: MapboxHomeMapSizes.iconSize,
@@ -66,7 +74,7 @@ class MapboxProvider extends ChangeNotifier {
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(lat, lng),
-          zoom: MapboxHomeMapSizes.searchedCameraZoomSizes,
+          zoom: 6,
         ),
       ),
     );
@@ -96,6 +104,48 @@ class MapboxProvider extends ChangeNotifier {
             ),
           )
           .toList());
+    }
+  }
+
+  Future<void> getDirections({
+    required List<LatLng> destinations,
+    RoutingProfile routingProfile = RoutingProfile.driving,
+  }) async {
+    final result = await services.directionRoute(
+      destinations: destinations,
+      routingProfile: routingProfile,
+    );
+    _directions = result;
+    notifyListeners();
+  }
+
+  Future<void> drawLine({required List<LatLng> destinations}) async {
+    final destinationsParams = <LatLng>[
+      LatLng(currentPosition!.latitude, currentPosition!.longitude),
+      ...destinations
+    ];
+
+    await getDirections(destinations: destinationsParams);
+    if (direction != null) {
+      for (var route in direction!.routes!.reversed) {
+        List<LatLng> polyLine = [];
+        PolylinePoints polylinePoints = PolylinePoints();
+        List<PointLatLng> result =
+            polylinePoints.decodePolyline(route.geometry!);
+        for (var e in result) {
+          polyLine.add(LatLng(e.latitude, e.longitude));
+        }
+        await mapController!.addLine(
+          LineOptions(
+            geometry: polyLine,
+            lineColor: direction!.routes!.indexOf(route) == 0
+                ? MapboxHomeMapSizes.selectedRoute
+                : MapboxHomeMapSizes.unSelectedRoute,
+            lineJoin: "round",
+            lineWidth: 4,
+          ),
+        );
+      }
     }
   }
 }

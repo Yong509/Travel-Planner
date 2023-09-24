@@ -1,1 +1,1 @@
-enum CategoryEnum { tea, nightLife, cafe, restaurant }
+enum CategoryEnum { tea, nightLife, cafe, restaurant, museum }

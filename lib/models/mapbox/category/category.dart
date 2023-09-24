@@ -13,5 +13,17 @@ List<Category> listCategory = [
       iconPath: "assets/icons/restaurant_icon.png"),
   Category(
       category: CategoryEnum.restaurant,
+      iconPath: "assets/icons/museum_icon.png"),
+  Category(
+      category: CategoryEnum.restaurant,
+      iconPath: "assets/icons/restaurant_icon.png"),
+  Category(
+      category: CategoryEnum.restaurant,
+      iconPath: "assets/icons/restaurant_icon.png"),
+  Category(
+      category: CategoryEnum.restaurant,
+      iconPath: "assets/icons/restaurant_icon.png"),
+  Category(
+      category: CategoryEnum.restaurant,
       iconPath: "assets/icons/restaurant_icon.png"),
 ];

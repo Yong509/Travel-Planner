@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:travel_planner/models/mapbox/direction/direction.dart';
+import 'package:travel_planner/models/mapbox/direction/routing_profile_enum.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 import '../constants/http_constant.dart';
 import 'http_clinent_service.dart';
@@ -27,6 +30,22 @@ class MapboxServices {
     final response = await httpClientService.get(url);
     return response.statusCode == HttpConstants.statusOk
         ? GeocodingPlaces.fromJson(jsonDecode(response.body))
+        : null;
+  }
+
+  Future<Direction?> directionRoute({
+    required List<LatLng> destinations,
+    RoutingProfile routingProfile = RoutingProfile.driving,
+  }) async {
+    final destinationParams = destinations
+        .map((latLng) => '${latLng.longitude}%2C${latLng.latitude}')
+        .join('%3B');
+    final profile = getRoutingProfileValue(routingProfile);
+    final url = Uri.parse(
+        "${HttpConstants.api_base_url}directions/v5/mapbox/$profile/$destinationParams?alternatives=true&geometries=polyline&language=en&overview=full&steps=true&access_token=$accessKey");
+    final response = await httpClientService.get(url);
+    return response.statusCode == HttpConstants.statusOk
+        ? Direction.fromJson(jsonDecode(response.body))
         : null;
   }
 }
