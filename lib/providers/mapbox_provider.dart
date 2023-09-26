@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:travel_planner/constants/mapbox_constants.dart';
 import 'package:travel_planner/constants/widget/home/mapbox_home_map_sizes.dart';
 import 'package:travel_planner/models/mapbox/category/category_enum.dart';
 import 'package:travel_planner/models/mapbox/direction/direction.dart';
@@ -66,15 +67,15 @@ class MapboxProvider extends ChangeNotifier {
     await mapController!.addSymbol(
       SymbolOptions(
         iconSize: MapboxHomeMapSizes.iconSize,
-        iconImage: "marker",
+        iconImage: MapboxConstants.mapboxMarkerID,
         geometry: LatLng(lat, lng),
       ),
     );
     await mapController!.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-          target: LatLng(lat, lng),
-          zoom: 6,
+          target: LatLng(currentPosition!.latitude, currentPosition!.longitude),
+          zoom: MapboxConstants.mapboxCameraZoomSelectedPlace,
         ),
       ),
     );
@@ -83,7 +84,8 @@ class MapboxProvider extends ChangeNotifier {
   }
 
   Future<Uint8List> loadMarkerImage() async {
-    final byteData = await rootBundle.load("assets/icons/marker.png");
+    final byteData =
+        await rootBundle.load(MapboxConstants.mapboxMarkerAssetPath);
     return byteData.buffer.asUint8List();
   }
 
@@ -98,7 +100,7 @@ class MapboxProvider extends ChangeNotifier {
           .map(
             (poi) => SymbolOptions(
               iconSize: MapboxHomeMapSizes.iconSize,
-              iconImage: "marker",
+              iconImage: MapboxConstants.mapboxMarkerID,
               geometry: LatLng(poi.center![1], poi.center![0]),
               zIndex: 2,
             ),
@@ -135,6 +137,7 @@ class MapboxProvider extends ChangeNotifier {
         for (var e in result) {
           polyLine.add(LatLng(e.latitude, e.longitude));
         }
+
         await mapController!.addLine(
           LineOptions(
             geometry: polyLine,

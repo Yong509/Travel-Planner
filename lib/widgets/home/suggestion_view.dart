@@ -31,13 +31,13 @@ class _SuggestionViewState extends State<SuggestionView> {
 
   @override
   void initState() {
-    super.initState();
-
+    FocusManager.instance.primaryFocus?.unfocus();
     searchFocusNode.addListener(() {
       if (searchFocusNode.hasFocus) {
         widget.panelController.open();
       }
     });
+    super.initState();
   }
 
   _onChange(String value) {
@@ -92,7 +92,10 @@ class _SuggestionViewState extends State<SuggestionView> {
         Flexible(
           child: SearchResultList(
             onSelected: (place) {
-              widget.panelController.close();
+              searchController.text = place.text ?? "";
+              widget.panelController.animatePanelToPosition(
+                  widget.panelController.panelPosition / 2,
+                  duration: const Duration(milliseconds: 300));
               widget.tabbarController.animateTo(1);
             },
           ),
