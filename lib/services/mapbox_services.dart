@@ -4,6 +4,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:travel_planner/models/mapbox/direction/direction.dart';
 import 'package:travel_planner/models/mapbox/direction/routing_profile_enum.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
+import 'package:travel_planner/models/mapbox/tilequery/tilequery.dart';
 import '../constants/http_constant.dart';
 import 'http_clinent_service.dart';
 
@@ -16,7 +17,7 @@ class MapboxServices {
     final url = Uri.parse(
         '${HttpConstants.api_base_url}geocoding/v5/mapbox.places/$place.json?access_token=$accessKey&limit=6');
     final response = await httpClientService.get(url);
-
+    print("response ${GeocodingPlaces.fromJson(jsonDecode(response.body))}");
     return response.statusCode == HttpConstants.statusOk
         ? GeocodingPlaces.fromJson(jsonDecode(response.body))
         : null;
@@ -46,6 +47,27 @@ class MapboxServices {
     final response = await httpClientService.get(url);
     return response.statusCode == HttpConstants.statusOk
         ? Direction.fromJson(jsonDecode(response.body))
+        : null;
+  }
+
+  Future<Tilequery?> fencingPlaceFromCurrentLocation(
+      {List<String>? categories,
+      required LatLng currentPosition,
+      required double radius}) async {
+    String? formatCategories;
+    if (categories != null && categories.isNotEmpty) {
+      formatCategories = categories.join("%2C");
+    }
+
+    final url = Uri.parse(
+      "${HttpConstants.api_base_url}v4/mapbox.mapbox-streets-v8/tilequery/"
+      "${currentPosition.longitude},${currentPosition.latitude}.json?"
+      "${categories != null && categories.isNotEmpty ? "layers=$formatCategories&" : ""}"
+      "radius=$radius&limit=50&access_token=$accessKey",
+    );
+    final response = await httpClientService.get(url);
+    return response.statusCode == HttpConstants.statusOk
+        ? Tilequery.fromJson(jsonDecode(response.body))
         : null;
   }
 }

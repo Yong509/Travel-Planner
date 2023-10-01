@@ -8,21 +8,21 @@ import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_ui_strin
 import 'package:travel_planner/providers/mapbox_provider.dart';
 import 'package:travel_planner/widgets/home/search_result_list.dart';
 
-class SuggestionView extends StatefulWidget {
+class SuggestionTab extends StatefulWidget {
   final PanelController panelController;
   final TabController tabbarController;
 
-  const SuggestionView({
+  const SuggestionTab({
     super.key,
     required this.panelController,
     required this.tabbarController,
   });
 
   @override
-  State<SuggestionView> createState() => _SuggestionViewState();
+  State<SuggestionTab> createState() => _SuggestionTabState();
 }
 
-class _SuggestionViewState extends State<SuggestionView> {
+class _SuggestionTabState extends State<SuggestionTab> {
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 
@@ -31,13 +31,13 @@ class _SuggestionViewState extends State<SuggestionView> {
 
   @override
   void initState() {
-    super.initState();
-
+    FocusManager.instance.primaryFocus?.unfocus();
     searchFocusNode.addListener(() {
       if (searchFocusNode.hasFocus) {
         widget.panelController.open();
       }
     });
+    super.initState();
   }
 
   _onChange(String value) {
@@ -92,7 +92,10 @@ class _SuggestionViewState extends State<SuggestionView> {
         Flexible(
           child: SearchResultList(
             onSelected: (place) {
-              widget.panelController.close();
+              searchController.text = place.text ?? "";
+              widget.panelController.animatePanelToPosition(
+                  widget.panelController.panelPosition / 2,
+                  duration: const Duration(milliseconds: 300));
               widget.tabbarController.animateTo(1);
             },
           ),

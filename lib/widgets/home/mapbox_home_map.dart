@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_planner/constants/mapbox_constants.dart';
 import 'package:travel_planner/constants/widget/home/mapbox_home_map_sizes.dart';
 
 import 'package:travel_planner/providers/mapbox_provider.dart';
@@ -28,7 +29,8 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
     final marker = await mapboxProvider.loadMarkerImage();
 
     mapboxProvider.mapController = controller;
-    await mapboxProvider.mapController!.addImage("marker", marker);
+    await mapboxProvider.mapController!
+        .addImage(MapboxConstants.mapboxMarkerID, marker);
   }
 
   @override
@@ -44,7 +46,7 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
               target: LatLng(snapshot.data!.latitude, snapshot.data!.longitude),
               zoom: MapboxHomeMapSizes.initCameraZoomSizes,
             ),
-            onMapClick: (_, latlng) async {
+            onMapClick: (point, latlng) async {
               await Provider.of<MapboxProvider>(context, listen: false)
                   .mapController!
                   .animateCamera(

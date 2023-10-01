@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_sizes.dart';
-import 'package:travel_planner/widgets/home/detail_view.dart';
-import 'package:travel_planner/widgets/home/suggestion_view.dart';
+import 'package:travel_planner/widgets/home/detail_tab/detail_tab.dart';
+import 'package:travel_planner/widgets/home/route_tab/route_tab.dart';
+import 'package:travel_planner/widgets/home/suggestion_tab/suggestion_tab.dart';
 
 class SlideBottomSheet extends StatefulWidget {
   const SlideBottomSheet({super.key});
@@ -19,7 +20,7 @@ class _SlideBottomSheetState extends State<SlideBottomSheet>
   @override
   void initState() {
     super.initState();
-    tabbarController = TabController(length: 2, vsync: this);
+    tabbarController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -59,11 +60,14 @@ class _SlideBottomSheetState extends State<SlideBottomSheet>
                 physics: const NeverScrollableScrollPhysics(),
                 controller: tabbarController,
                 children: [
-                  SuggestionView(
+                  SuggestionTab(
                     panelController: panelController,
                     tabbarController: tabbarController,
                   ),
-                  DetailView(
+                  DetailTab(
+                    tabbarController: tabbarController,
+                  ),
+                  RouteTab(
                     tabbarController: tabbarController,
                   ),
                 ],
