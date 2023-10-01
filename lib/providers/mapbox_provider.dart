@@ -63,7 +63,7 @@ class MapboxProvider extends ChangeNotifier {
     await mapController!.clearLines();
     final lat = selected.center![1];
     final lng = selected.center![0];
-    await drawLine(destinations: [LatLng(lat, lng)]);
+    // await drawLine(destinations: [LatLng(lat, lng)]);
     await mapController!.addSymbol(
       SymbolOptions(
         iconSize: MapboxHomeMapSizes.iconSize,
@@ -74,7 +74,7 @@ class MapboxProvider extends ChangeNotifier {
     await mapController!.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-          target: LatLng(currentPosition!.latitude, currentPosition!.longitude),
+          target: LatLng(lat, lng),
           zoom: MapboxConstants.mapboxCameraZoomSelectedPlace,
         ),
       ),
@@ -121,13 +121,19 @@ class MapboxProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> drawLine({required List<LatLng> destinations}) async {
+  Future<void> drawLine(
+      {required List<LatLng> destinations,
+      RoutingProfile? routingProfile}) async {
+    mapController!.clearLines();
     final destinationsParams = <LatLng>[
       LatLng(currentPosition!.latitude, currentPosition!.longitude),
       ...destinations
     ];
+    await getDirections(
+      destinations: destinationsParams,
+      routingProfile: routingProfile ?? RoutingProfile.drivingTraffic,
+    );
 
-    await getDirections(destinations: destinationsParams);
     if (direction != null) {
       for (var route in direction!.routes!.reversed) {
         List<LatLng> polyLine = [];
@@ -137,7 +143,6 @@ class MapboxProvider extends ChangeNotifier {
         for (var e in result) {
           polyLine.add(LatLng(e.latitude, e.longitude));
         }
-
         await mapController!.addLine(
           LineOptions(
             geometry: polyLine,
@@ -149,6 +154,46 @@ class MapboxProvider extends ChangeNotifier {
           ),
         );
       }
+      await mapController!.animateCamera(
+        CameraUpdate.newLatLngBounds(
+          top: 300,
+          bottom: 300,
+          LatLngBounds(
+            northeast:
+                currentPosition!.latitude <= destinationsParams.last.latitude
+                    ? LatLng(
+                        destinationsParams.last.latitude,
+                        destinationsParams.last.longitude,
+                      )
+                    : LatLng(
+                        currentPosition!.latitude,
+                        currentPosition!.longitude,
+                      ),
+            southwest: currentPosition!.latitude <=
+                    destinationsParams.last.latitude
+                ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
+                : LatLng(
+                    destinationsParams.last.latitude,
+                    destinationsParams.last.longitude,
+                  ),
+          ),
+        ),
+        // CameraUpdate.newCameraPosition(
+        //   CameraPosition(
+        //     target:
+        //         LatLng(currentPosition!.latitude, currentPosition!.longitude),
+        //     zoom: MapboxConstants.mapboxCameraZoomDrawLine,
+        //   ),
+        // ),
+      );
     }
+  }
+
+  Future<void> fencingPlace({String? category, required double radius}) async {
+    await services.fencingPlaceFromCurrentLocation(
+      currentPosition:
+          LatLng(currentPosition!.latitude, currentPosition!.longitude),
+      radius: radius,
+    );
   }
 }

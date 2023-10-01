@@ -8,21 +8,21 @@ import 'package:travel_planner/constants/widget/home/slide_bottom_sheet_ui_strin
 import 'package:travel_planner/providers/mapbox_provider.dart';
 import 'package:travel_planner/widgets/home/search_result_list.dart';
 
-class SuggestionView extends StatefulWidget {
+class SuggestionTab extends StatefulWidget {
   final PanelController panelController;
   final TabController tabbarController;
 
-  const SuggestionView({
+  const SuggestionTab({
     super.key,
     required this.panelController,
     required this.tabbarController,
   });
 
   @override
-  State<SuggestionView> createState() => _SuggestionViewState();
+  State<SuggestionTab> createState() => _SuggestionTabState();
 }
 
-class _SuggestionViewState extends State<SuggestionView> {
+class _SuggestionTabState extends State<SuggestionTab> {
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 
