@@ -17,7 +17,7 @@ class MapboxServices {
     final url = Uri.parse(
         '${HttpConstants.api_base_url}geocoding/v5/mapbox.places/$place.json?access_token=$accessKey&limit=6');
     final response = await httpClientService.get(url);
-    print("response ${GeocodingPlaces.fromJson(jsonDecode(response.body))}");
+
     return response.statusCode == HttpConstants.statusOk
         ? GeocodingPlaces.fromJson(jsonDecode(response.body))
         : null;

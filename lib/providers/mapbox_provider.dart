@@ -178,13 +178,6 @@ class MapboxProvider extends ChangeNotifier {
                   ),
           ),
         ),
-        // CameraUpdate.newCameraPosition(
-        //   CameraPosition(
-        //     target:
-        //         LatLng(currentPosition!.latitude, currentPosition!.longitude),
-        //     zoom: MapboxConstants.mapboxCameraZoomDrawLine,
-        //   ),
-        // ),
       );
     }
   }

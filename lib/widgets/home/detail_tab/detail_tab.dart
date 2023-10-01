@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_planner/constants/widget/home/route_tab/route_tab_sizes.dart';
 import 'package:travel_planner/models/mapbox/direction/routing_profile_enum.dart';
 import 'package:travel_planner/providers/mapbox_provider.dart';
 import 'package:travel_planner/utils/build_context_extension.dart';
@@ -44,8 +45,8 @@ class _DetailTabState extends State<DetailTab> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 30,
+            SizedBox(
+              height: RouteTabSizes.travelMethodButtonTitleSpacing,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -54,11 +55,14 @@ class _DetailTabState extends State<DetailTab> {
                   case RoutingProfile.driving:
                     return Expanded(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        margin: RouteTabSizes.travelMethodButtonBorderMargin,
                         child: TravelMethodButton(
                             onPressed: () async {
                               await _onSelectRoutingProfile(
-                                  mapboxProvider, RoutingProfile.driving);
+                                mapboxProvider,
+                                RoutingProfile.driving,
+                              );
+                              widget.tabbarController.animateTo(2);
                             },
                             icon: PhosphorIcons.car_fill),
                       ),
@@ -66,11 +70,14 @@ class _DetailTabState extends State<DetailTab> {
                   case RoutingProfile.cycling:
                     return Expanded(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        margin: RouteTabSizes.travelMethodButtonBorderMargin,
                         child: TravelMethodButton(
                             onPressed: () async {
                               await _onSelectRoutingProfile(
-                                  mapboxProvider, RoutingProfile.cycling);
+                                mapboxProvider,
+                                RoutingProfile.cycling,
+                              );
+                              widget.tabbarController.animateTo(2);
                             },
                             icon: PhosphorIcons.bicycle_fill),
                       ),
@@ -78,11 +85,14 @@ class _DetailTabState extends State<DetailTab> {
                   case RoutingProfile.walking:
                     return Expanded(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        margin: RouteTabSizes.travelMethodButtonBorderMargin,
                         child: TravelMethodButton(
                             onPressed: () async {
                               await _onSelectRoutingProfile(
-                                  mapboxProvider, RoutingProfile.walking);
+                                mapboxProvider,
+                                RoutingProfile.walking,
+                              );
+                              widget.tabbarController.animateTo(2);
                             },
                             icon: PhosphorIcons.person_simple_walk_fill),
                       ),
