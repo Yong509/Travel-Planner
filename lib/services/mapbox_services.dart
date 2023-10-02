@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:travel_planner/constants/mapbox_constants.dart';
 import 'package:travel_planner/models/mapbox/direction/direction.dart';
 import 'package:travel_planner/models/mapbox/direction/routing_profile_enum.dart';
 import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
 import 'package:travel_planner/models/mapbox/tilequery/tilequery.dart';
 import '../constants/http_constant.dart';
 import 'http_clinent_service.dart';
+import 'dart:math';
 
 class MapboxServices {
   MapboxServices(this.httpClientService);
@@ -66,8 +68,74 @@ class MapboxServices {
       "radius=$radius&limit=50&access_token=$accessKey",
     );
     final response = await httpClientService.get(url);
+    final queryResponse = Tilequery.fromJson(jsonDecode(response.body));
+    print(
+        "tile query ${queryResponse.features![0].geometry!.coordinates![0]} ${queryResponse.features![0].geometry!.coordinates![1]}");
     return response.statusCode == HttpConstants.statusOk
         ? Tilequery.fromJson(jsonDecode(response.body))
         : null;
+  }
+
+  double radians(double degrees) {
+    return degrees * (pi / 180);
+  }
+
+  double degrees(double radians) {
+    return radians * (180 / pi);
+  }
+
+  Future<LatLng> calculateNextCoordinates(double startLat, double startLng,
+      double distanceKm, double bearingDegrees) async {
+    double bearingRadians = radians(bearingDegrees);
+
+    double startLatRadians = radians(startLat);
+    double startLngRadians = radians(startLng);
+
+    double newLatRadians = asin(
+        sin(startLatRadians) * cos(distanceKm / MapboxConstants.earthRadiusKm) +
+            cos(startLatRadians) *
+                sin(distanceKm / MapboxConstants.earthRadiusKm) *
+                cos(bearingRadians));
+
+    double newLngRadians = startLngRadians +
+        atan2(
+            sin(bearingRadians) *
+                sin(distanceKm / MapboxConstants.earthRadiusKm) *
+                cos(startLatRadians),
+            cos(distanceKm / MapboxConstants.earthRadiusKm) -
+                sin(startLatRadians) * sin(newLatRadians));
+
+    double newLat = degrees(newLatRadians);
+    double newLng = degrees(newLngRadians);
+
+    return LatLng(newLat, newLng);
+  }
+
+  double calculateHaversineDistance(LatLng point1, LatLng point2) {
+    double lat1 = radians(point1.latitude);
+    double lon1 = radians(point1.longitude);
+    double lat2 = radians(point2.latitude);
+    double lon2 = radians(point2.longitude);
+
+    double dLat = lat2 - lat1;
+    double dLon = lon2 - lon1;
+
+    double a =
+        pow(sin(dLat / 2), 2) + cos(lat1) * cos(lat2) * pow(sin(dLon / 2), 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return MapboxConstants.earthRadiusKm * c;
+  }
+
+  List<LatLng> findNearMatches(
+      LatLng target, List<LatLng> coordinates, double maxDistance) {
+    List<LatLng> nearMatches = [];
+    for (LatLng coordinate in coordinates) {
+      double distance = calculateHaversineDistance(target, coordinate);
+
+      if (distance <= maxDistance) {
+        nearMatches.add(coordinate);
+      }
+    }
+    return nearMatches;
   }
 }

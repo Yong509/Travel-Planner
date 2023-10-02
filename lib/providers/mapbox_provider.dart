@@ -183,6 +183,13 @@ class MapboxProvider extends ChangeNotifier {
   }
 
   Future<void> fencingPlace({String? category, required double radius}) async {
+    // if (_directions != null) {
+
+    //   LatLng nextCoordinates = await services.calculateNextCoordinates(
+    //       13.883457080295935, 100.57323200000002, 5, 0);
+    //   print(
+    //       "Next Coordinates: ${nextCoordinates.latitude}, ${nextCoordinates.longitude}");
+    // }
     await services.fencingPlaceFromCurrentLocation(
       currentPosition:
           LatLng(currentPosition!.latitude, currentPosition!.longitude),
