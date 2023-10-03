@@ -64,44 +64,44 @@ class Geometry {
 
 @JsonSerializable()
 class Properties {
+  @JsonKey(name: "category_zh-Hans")
+  String? categoryZhHans;
   @JsonKey(name: "type")
   String? type;
-  @JsonKey(name: "structure")
-  String? structure;
-  @JsonKey(name: "oneway")
-  String? oneway;
-  @JsonKey(name: "iso_3166_2")
-  String? iso31662;
-  @JsonKey(name: "len")
-  int? len;
+  @JsonKey(name: "filterrank")
+  int? filterrank;
+  @JsonKey(name: "category_en")
+  String? categoryEn;
+  @JsonKey(name: "sizerank")
+  int? sizerank;
   @JsonKey(name: "iso_3166_1")
   String? iso31661;
+  @JsonKey(name: "maki")
+  String? maki;
+  @JsonKey(name: "name_script")
+  String? nameScript;
+  @JsonKey(name: "iso_3166_2")
+  String? iso31662;
   @JsonKey(name: "class")
   String? propertiesClass;
+  @JsonKey(name: "name")
+  String? name;
   @JsonKey(name: "tilequery")
   TilequeryClass? tilequery;
-  @JsonKey(name: "underground")
-  String? underground;
-  @JsonKey(name: "extrude")
-  String? extrude;
-  @JsonKey(name: "height")
-  int? height;
-  @JsonKey(name: "min_height")
-  int? minHeight;
 
   Properties({
+    this.categoryZhHans,
     this.type,
-    this.structure,
-    this.oneway,
-    this.iso31662,
-    this.len,
+    this.filterrank,
+    this.categoryEn,
+    this.sizerank,
     this.iso31661,
+    this.maki,
+    this.nameScript,
+    this.iso31662,
     this.propertiesClass,
+    this.name,
     this.tilequery,
-    this.underground,
-    this.extrude,
-    this.height,
-    this.minHeight,
   });
 
   factory Properties.fromJson(Map<String, dynamic> json) =>

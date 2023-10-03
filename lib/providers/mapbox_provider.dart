@@ -10,7 +10,9 @@ import 'package:travel_planner/constants/widget/home/mapbox_home_map_sizes.dart'
 import 'package:travel_planner/models/mapbox/category/category_enum.dart';
 import 'package:travel_planner/models/mapbox/direction/direction.dart';
 import 'package:travel_planner/models/mapbox/direction/routing_profile_enum.dart';
-import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart';
+import 'package:travel_planner/models/mapbox/geocoding/geocoding_places.dart'
+    as Geo;
+import 'package:travel_planner/models/mapbox/tilequery/tilequery.dart';
 import 'package:travel_planner/services/mapbox_services.dart';
 
 class MapboxProvider extends ChangeNotifier {
@@ -27,14 +29,17 @@ class MapboxProvider extends ChangeNotifier {
   Position? _currentPosition;
   Position? get currentPosition => _currentPosition;
 
-  GeocodingPlaces? _searchPlaceResults;
-  GeocodingPlaces? get searchPlaceResults => _searchPlaceResults;
+  Geo.GeocodingPlaces? _searchPlaceResults;
+  Geo.GeocodingPlaces? get searchPlaceResults => _searchPlaceResults;
 
-  Feature? _selectedPlace;
-  Feature? get selectedPlace => _selectedPlace;
+  Geo.Feature? _selectedPlace;
+  Geo.Feature? get selectedPlace => _selectedPlace;
 
   Direction? _directions;
   Direction? get direction => _directions;
+
+  Symbol? _destinationIcon;
+  Symbol? get destinationIcon => _destinationIcon;
 
   Future<Position?> getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
@@ -57,17 +62,17 @@ class MapboxProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setSelectedPlace({required Feature selected}) async {
+  Future<void> setSelectedPlace({required Geo.Feature selected}) async {
     _selectedPlace = selected;
     await mapController!.clearSymbols();
     await mapController!.clearLines();
     final lat = selected.center![1];
     final lng = selected.center![0];
-    // await drawLine(destinations: [LatLng(lat, lng)]);
-    await mapController!.addSymbol(
+
+    _destinationIcon = await mapController!.addSymbol(
       SymbolOptions(
         iconSize: MapboxHomeMapSizes.iconSize,
-        iconImage: MapboxConstants.mapboxMarkerID,
+        iconImage: MapboxConstants.mapboxFencingMarkerID,
         geometry: LatLng(lat, lng),
       ),
     );
@@ -83,9 +88,8 @@ class MapboxProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Uint8List> loadMarkerImage() async {
-    final byteData =
-        await rootBundle.load(MapboxConstants.mapboxMarkerAssetPath);
+  Future<Uint8List> loadMarkerImage(String path) async {
+    final byteData = await rootBundle.load(path);
     return byteData.buffer.asUint8List();
   }
 
@@ -183,17 +187,32 @@ class MapboxProvider extends ChangeNotifier {
   }
 
   Future<void> fencingPlace({String? category, required double radius}) async {
-    // if (_directions != null) {
+    List<LatLng> locationLatLng = [];
 
-    //   LatLng nextCoordinates = await services.calculateNextCoordinates(
-    //       13.883457080295935, 100.57323200000002, 5, 0);
-    //   print(
-    //       "Next Coordinates: ${nextCoordinates.latitude}, ${nextCoordinates.longitude}");
-    // }
-    await services.fencingPlaceFromCurrentLocation(
-      currentPosition:
-          LatLng(currentPosition!.latitude, currentPosition!.longitude),
-      radius: radius,
-    );
+    if (_directions != null) {
+      for (var leg in _directions!.routes![0].legs!) {
+        for (var step in leg.steps!) {
+          for (var intersec in step.intersections!) {
+            locationLatLng
+                .add(LatLng(intersec.location![1], intersec.location![0]));
+          }
+        }
+      }
+
+      double distanceThreshold = 5.0;
+      List<LatLng> filteredLatLngList =
+          services.filterLatLngList(locationLatLng, distanceThreshold);
+
+      for (LatLng point in filteredLatLngList) {
+        Tilequery? fencingList;
+        fencingList = await services.fencingPlaceFromCurrentLocation(
+          poi: point,
+          radius: radius,
+        );
+        for (var element in fencingList!.features!) {
+          print("type check ${element.properties!.type}");
+        }
+      }
+    }
   }
 }

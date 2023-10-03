@@ -19,7 +19,7 @@ class _RouteTabState extends State<RouteTab> {
     FocusManager.instance.primaryFocus?.unfocus();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final mapboxProvider = context.read<MapboxProvider>();
-      mapboxProvider.fencingPlace(radius: 100);
+      mapboxProvider.fencingPlace(radius: 1000);
     });
     super.initState();
   }

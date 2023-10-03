@@ -46,6 +46,8 @@ class MapboxServices {
     final profile = getRoutingProfileValue(routingProfile);
     final url = Uri.parse(
         "${HttpConstants.api_base_url}directions/v5/mapbox/$profile/$destinationParams?alternatives=true&geometries=polyline&language=en&overview=full&steps=true&access_token=$accessKey");
+    print(
+        "${HttpConstants.api_base_url}directions/v5/mapbox/$profile/$destinationParams?alternatives=true&geometries=polyline&language=en&overview=full&steps=true&access_token=$accessKey");
     final response = await httpClientService.get(url);
     return response.statusCode == HttpConstants.statusOk
         ? Direction.fromJson(jsonDecode(response.body))
@@ -54,7 +56,7 @@ class MapboxServices {
 
   Future<Tilequery?> fencingPlaceFromCurrentLocation(
       {List<String>? categories,
-      required LatLng currentPosition,
+      required LatLng poi,
       required double radius}) async {
     String? formatCategories;
     if (categories != null && categories.isNotEmpty) {
@@ -63,79 +65,55 @@ class MapboxServices {
 
     final url = Uri.parse(
       "${HttpConstants.api_base_url}v4/mapbox.mapbox-streets-v8/tilequery/"
-      "${currentPosition.longitude},${currentPosition.latitude}.json?"
+      "${poi.longitude},${poi.latitude}.json?"
       "${categories != null && categories.isNotEmpty ? "layers=$formatCategories&" : ""}"
       "radius=$radius&limit=50&access_token=$accessKey",
     );
     final response = await httpClientService.get(url);
     final queryResponse = Tilequery.fromJson(jsonDecode(response.body));
     print(
-        "tile query ${queryResponse.features![0].geometry!.coordinates![0]} ${queryResponse.features![0].geometry!.coordinates![1]}");
+        "tile query ${queryResponse.type} ${queryResponse.features![0].geometry!.type}");
     return response.statusCode == HttpConstants.statusOk
         ? Tilequery.fromJson(jsonDecode(response.body))
         : null;
   }
 
-  double radians(double degrees) {
-    return degrees * (pi / 180);
-  }
+  double calculateDistance(LatLng point1, LatLng point2) {
+    double radiusOfEarth = MapboxConstants.earthRadiusKm;
 
-  double degrees(double radians) {
-    return radians * (180 / pi);
-  }
-
-  Future<LatLng> calculateNextCoordinates(double startLat, double startLng,
-      double distanceKm, double bearingDegrees) async {
-    double bearingRadians = radians(bearingDegrees);
-
-    double startLatRadians = radians(startLat);
-    double startLngRadians = radians(startLng);
-
-    double newLatRadians = asin(
-        sin(startLatRadians) * cos(distanceKm / MapboxConstants.earthRadiusKm) +
-            cos(startLatRadians) *
-                sin(distanceKm / MapboxConstants.earthRadiusKm) *
-                cos(bearingRadians));
-
-    double newLngRadians = startLngRadians +
-        atan2(
-            sin(bearingRadians) *
-                sin(distanceKm / MapboxConstants.earthRadiusKm) *
-                cos(startLatRadians),
-            cos(distanceKm / MapboxConstants.earthRadiusKm) -
-                sin(startLatRadians) * sin(newLatRadians));
-
-    double newLat = degrees(newLatRadians);
-    double newLng = degrees(newLngRadians);
-
-    return LatLng(newLat, newLng);
-  }
-
-  double calculateHaversineDistance(LatLng point1, LatLng point2) {
-    double lat1 = radians(point1.latitude);
-    double lon1 = radians(point1.longitude);
-    double lat2 = radians(point2.latitude);
-    double lon2 = radians(point2.longitude);
+    double lat1 = point1.latitude * pi / 180;
+    double lon1 = point1.longitude * pi / 180;
+    double lat2 = point2.latitude * pi / 180;
+    double lon2 = point2.longitude * pi / 180;
 
     double dLat = lat2 - lat1;
     double dLon = lon2 - lon1;
 
-    double a =
-        pow(sin(dLat / 2), 2) + cos(lat1) * cos(lat2) * pow(sin(dLon / 2), 2);
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2);
+
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    return MapboxConstants.earthRadiusKm * c;
+
+    double distance = radiusOfEarth * c;
+    return distance;
   }
 
-  List<LatLng> findNearMatches(
-      LatLng target, List<LatLng> coordinates, double maxDistance) {
-    List<LatLng> nearMatches = [];
-    for (LatLng coordinate in coordinates) {
-      double distance = calculateHaversineDistance(target, coordinate);
+  List<LatLng> filterLatLngList(
+      List<LatLng> latLngList, double distanceThreshold) {
+    List<LatLng> filteredList = [];
+    if (latLngList.isEmpty) {
+      return filteredList;
+    }
 
-      if (distance <= maxDistance) {
-        nearMatches.add(coordinate);
+    filteredList.add(latLngList[0]);
+
+    for (int i = 1; i < latLngList.length; i++) {
+      double distance = calculateDistance(filteredList.last, latLngList[i]);
+      if (distance >= distanceThreshold) {
+        filteredList.add(latLngList[i]);
       }
     }
-    return nearMatches;
+
+    return filteredList;
   }
 }

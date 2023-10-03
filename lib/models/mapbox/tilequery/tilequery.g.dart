@@ -49,36 +49,36 @@ Map<String, dynamic> _$GeometryToJson(Geometry instance) => <String, dynamic>{
     };
 
 Properties _$PropertiesFromJson(Map<String, dynamic> json) => Properties(
+      categoryZhHans: json['category_zh-Hans'] as String?,
       type: json['type'] as String?,
-      structure: json['structure'] as String?,
-      oneway: json['oneway'] as String?,
-      iso31662: json['iso_3166_2'] as String?,
-      len: json['len'] as int?,
+      filterrank: json['filterrank'] as int?,
+      categoryEn: json['category_en'] as String?,
+      sizerank: json['sizerank'] as int?,
       iso31661: json['iso_3166_1'] as String?,
+      maki: json['maki'] as String?,
+      nameScript: json['name_script'] as String?,
+      iso31662: json['iso_3166_2'] as String?,
       propertiesClass: json['class'] as String?,
+      name: json['name'] as String?,
       tilequery: json['tilequery'] == null
           ? null
           : TilequeryClass.fromJson(json['tilequery'] as Map<String, dynamic>),
-      underground: json['underground'] as String?,
-      extrude: json['extrude'] as String?,
-      height: json['height'] as int?,
-      minHeight: json['min_height'] as int?,
     );
 
 Map<String, dynamic> _$PropertiesToJson(Properties instance) =>
     <String, dynamic>{
+      'category_zh-Hans': instance.categoryZhHans,
       'type': instance.type,
-      'structure': instance.structure,
-      'oneway': instance.oneway,
-      'iso_3166_2': instance.iso31662,
-      'len': instance.len,
+      'filterrank': instance.filterrank,
+      'category_en': instance.categoryEn,
+      'sizerank': instance.sizerank,
       'iso_3166_1': instance.iso31661,
+      'maki': instance.maki,
+      'name_script': instance.nameScript,
+      'iso_3166_2': instance.iso31662,
       'class': instance.propertiesClass,
+      'name': instance.name,
       'tilequery': instance.tilequery,
-      'underground': instance.underground,
-      'extrude': instance.extrude,
-      'height': instance.height,
-      'min_height': instance.minHeight,
     };
 
 TilequeryClass _$TilequeryClassFromJson(Map<String, dynamic> json) =>

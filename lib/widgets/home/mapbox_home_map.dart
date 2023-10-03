@@ -26,11 +26,14 @@ class _MapboxHomeMapState extends State<MapboxHomeMap> {
 
   _onMapCreated(MapboxMapController controller) async {
     final mapboxProvider = context.read<MapboxProvider>();
-    final marker = await mapboxProvider.loadMarkerImage();
-
+    final marker = await mapboxProvider
+        .loadMarkerImage(MapboxConstants.mapboxMarkerAssetPath);
+    final fencingMarker = await mapboxProvider
+        .loadMarkerImage(MapboxConstants.mapboxFencingMarkerAssetPath);
     mapboxProvider.mapController = controller;
-    await mapboxProvider.mapController!
-        .addImage(MapboxConstants.mapboxMarkerID, marker);
+    mapboxProvider.mapController!
+      ..addImage(MapboxConstants.mapboxMarkerID, marker)
+      ..addImage(MapboxConstants.mapboxFencingMarkerID, fencingMarker);
   }
 
   @override
