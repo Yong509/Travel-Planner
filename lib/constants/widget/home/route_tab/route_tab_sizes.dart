@@ -21,4 +21,6 @@ class RouteTabSizes {
   static double verticalDividerThickness = 2;
   static double verticalDividerDashGapLength = 1;
   static double verticalDividerRadius = 20;
+
+  static double routePathRadiusSpacing = 20;
 }

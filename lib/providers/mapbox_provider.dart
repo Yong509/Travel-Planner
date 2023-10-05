@@ -69,10 +69,10 @@ class MapboxProvider extends ChangeNotifier {
     final lat = selected.center![1];
     final lng = selected.center![0];
 
-    _destinationIcon = await mapController!.addSymbol(
+    await mapController!.addSymbol(
       SymbolOptions(
         iconSize: MapboxHomeMapSizes.iconSize,
-        iconImage: MapboxConstants.mapboxFencingMarkerID,
+        iconImage: MapboxConstants.mapboxMarkerID,
         geometry: LatLng(lat, lng),
       ),
     );
@@ -209,8 +209,22 @@ class MapboxProvider extends ChangeNotifier {
           poi: point,
           radius: radius,
         );
-        for (var element in fencingList!.features!) {
-          print("type check ${element.properties!.type}");
+
+        final temp = fencingList!.features!
+            .where((element) => element.properties!.type != null)
+            .where((element) {
+          return element.properties!.type!.contains("residential");
+        });
+
+        for (var element in temp) {
+          await mapController!.addSymbol(
+            SymbolOptions(
+              iconSize: MapboxHomeMapSizes.iconSize,
+              iconImage: MapboxConstants.mapboxFencingMarkerID,
+              geometry: LatLng(element.geometry!.coordinates![1],
+                  element.geometry!.coordinates![0]),
+            ),
+          );
         }
       }
     }
